@@ -1,0 +1,35 @@
+workflows:
+  ios-release:
+    name: Ezan Vakti Türkiye - iOS
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Create clean iOS project with Podfile
+        script: |
+          rm -rf /tmp/ezan_ios_template
+          flutter create --platforms=ios --org com.ersantopkara --project-name ezan_vakti_turkiye /tmp/ezan_ios_template
+          rm -rf ios
+          cp -R /tmp/ezan_ios_template/ios ios
+          sed -i '' 's/com\.ersantopkara\.ezan_vakti_turkiye/com.ersantopkara.ezanvaktiturkiye/g' ios/Runner.xcodeproj/project.pbxproj
+      - name: Get Flutter packages
+        script: flutter pub get
+      - name: Install CocoaPods dependencies
+        script: |
+          cd ios
+          pod install
+      - name: Build iOS without code signing
+        script: |
+          xcodebuild -workspace ios/Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -sdk iphoneos \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build
+    artifacts:
+      - /tmp/xcodebuild_logs/*.log
+      - build/ios/iphoneos/**/*.app
