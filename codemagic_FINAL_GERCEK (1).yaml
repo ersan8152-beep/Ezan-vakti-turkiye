@@ -1,0 +1,59 @@
+workflows:
+  ios-release:
+    name: Ezan Vakti Turkiye - iOS
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+
+    scripts:
+      - name: Create iOS project
+        script: |
+          rm -rf ios
+          flutter create --platforms=ios --org com.ersantopkara --project-name ezan_vakti_turkiye .
+
+      - name: Get Flutter packages
+        script: flutter pub get
+
+      - name: Configure iOS
+        script: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          pod = Path("ios/Podfile")
+          if not pod.exists():
+              raise SystemExit("ERROR: Flutter did not create ios/Podfile")
+
+          s = pod.read_text()
+          if re.search(r"^\s*#?\s*platform :ios", s, re.M):
+              s = re.sub(r"^\s*#?\s*platform :ios.*$", "platform :ios, '16.0'", s, flags=re.M)
+          else:
+              s = "platform :ios, '16.0'\n" + s
+          pod.write_text(s)
+
+          pbx = Path("ios/Runner.xcodeproj/project.pbxproj")
+          x = pbx.read_text()
+          x = re.sub(r"IPHONEOS_DEPLOYMENT_TARGET = [^;]+;", "IPHONEOS_DEPLOYMENT_TARGET = 16.0;", x)
+          x = re.sub(r"PRODUCT_BUNDLE_IDENTIFIER = [^;]+;", "PRODUCT_BUNDLE_IDENTIFIER = com.ersantopkara.ezanvaktiturkiye;", x)
+          pbx.write_text(x)
+
+          print("Podfile exists:", pod.exists())
+          print("Bundle ID: com.ersantopkara.ezanvaktiturkiye")
+          PY
+
+      - name: Install CocoaPods
+        script: |
+          cd ios
+          pod install --repo-update
+
+      - name: Build iOS unsigned
+        script: |
+          xcodebuild             -workspace ios/Runner.xcworkspace             -scheme Runner             -configuration Release             -sdk iphoneos             CODE_SIGNING_ALLOWED=NO             CODE_SIGNING_REQUIRED=NO             CODE_SIGN_IDENTITY=""             DEVELOPMENT_TEAM=""             build
+
+    artifacts:
+      - /tmp/xcodebuild_logs/*.log
+      - build/ios/iphoneos/**/*.app
