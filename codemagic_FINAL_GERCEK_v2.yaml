@@ -1,0 +1,70 @@
+workflows:
+  ios-release:
+    name: Ezan Vakti Turkiye - iOS
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+
+    scripts:
+      - name: Create iOS project
+        script: |
+          rm -rf ios
+          flutter create --platforms=ios --org com.ersantopkara --project-name ezan_vakti_turkiye .
+
+      - name: Get Flutter packages
+        script: flutter pub get
+
+      - name: Generate iOS build configuration
+        script: flutter build ios --config-only --no-codesign
+
+      - name: Configure iOS target and Bundle ID
+        script: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          pbx = Path("ios/Runner.xcodeproj/project.pbxproj")
+          s = pbx.read_text()
+
+          s = re.sub(
+              r"IPHONEOS_DEPLOYMENT_TARGET = [^;]+;",
+              "IPHONEOS_DEPLOYMENT_TARGET = 16.0;",
+              s
+          )
+          s = re.sub(
+              r"PRODUCT_BUNDLE_IDENTIFIER = [^;]+;",
+              "PRODUCT_BUNDLE_IDENTIFIER = com.ersantopkara.ezanvaktiturkiye;",
+              s
+          )
+
+          pbx.write_text(s)
+          PY
+
+          echo "=== iOS project ==="
+          test -f ios/Runner.xcodeproj/project.pbxproj
+          echo "=== Bundle ID ==="
+          grep -o "PRODUCT_BUNDLE_IDENTIFIER = [^;]*" ios/Runner.xcodeproj/project.pbxproj | sort -u
+          echo "=== Deployment target ==="
+          grep -o "IPHONEOS_DEPLOYMENT_TARGET = [^;]*" ios/Runner.xcodeproj/project.pbxproj | sort -u
+
+      - name: Build iOS without code signing
+        script: |
+          xcodebuild \
+            -project ios/Runner.xcodeproj \
+            -scheme Runner \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination "generic/platform=iOS" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            DEVELOPMENT_TEAM="" \
+            build
+
+    artifacts:
+      - /tmp/xcodebuild_logs/*.log
+      - build/ios/iphoneos/**/*.app
