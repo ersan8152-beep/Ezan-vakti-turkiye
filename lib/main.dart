@@ -438,7 +438,7 @@ class _DuaTabState extends State<DuaTab> {
                   const Icon(Icons.chevron_right),
                 ]),
                 const SizedBox(height:15),
-                Text(d.arabic,textDirection:TextDirection.rtl,textAlign:TextAlign.right,style:const TextStyle(fontSize:23,height:1.7)),
+                Text(d.arabic,textAlign:TextAlign.right,style:const TextStyle(fontSize:23,height:1.7)),
                 const SizedBox(height:8),
                 Text(d.meaning,style:const TextStyle(color:Colors.grey)),
               ]),
@@ -466,7 +466,7 @@ class _DuaDetailPageState extends State<DuaDetailPage> {
         elevation:0,
         shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(24)),
         child:Padding(padding:const EdgeInsets.all(22),child:Column(children:[
-          Text(widget.dua.arabic,textDirection:TextDirection.rtl,textAlign:TextAlign.center,style:const TextStyle(fontSize:29,height:1.8)),
+          Text(widget.dua.arabic,textAlign:TextAlign.center,style:const TextStyle(fontSize:29,height:1.8)),
           const Divider(height:35),
           Align(alignment:Alignment.centerLeft,child:const Text('Okunuş',style:TextStyle(fontWeight:FontWeight.bold))),
           const SizedBox(height:8),
@@ -638,7 +638,7 @@ class _QiblaTabState extends State<QiblaTab> {
       if(p==LocationPermission.denied||p==LocationPermission.deniedForever) return;
       final pos=await Geolocator.getCurrentPosition(locationSettings:const LocationSettings(accuracy:LocationAccuracy.high));
       bearing=qiblaBearing(pos.latitude,pos.longitude);
-      final marks=await placemarkFromCoordinates(pos.latitude,pos.longitude);
+      final geo = Geocoding(locale: const Locale('tr','TR')); final marks=await geo.placemarkFromCoordinates(pos.latitude,pos.longitude);
       if(marks.isNotEmpty) place='${marks.first.administrativeArea ?? ''} • ${marks.first.subAdministrativeArea ?? marks.first.locality ?? ''}';
     } finally { if(mounted)setState(()=>loading=false); }
   }
