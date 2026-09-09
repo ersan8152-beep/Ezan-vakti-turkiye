@@ -85,7 +85,7 @@ class _AppShellState extends State<AppShell> {
   Future<void> _initNotifications() async {
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
     const ios = DarwinInitializationSettings();
-    await notifier.initialize(const InitializationSettings(android:android, iOS:ios));
+    await notifier.initialize(settings: const InitializationSettings(android:android, iOS:ios));
   }
 
   Future<void> _restore() async {
@@ -642,7 +642,8 @@ class _QiblaTabState extends State<QiblaTab> {
       if(p==LocationPermission.denied||p==LocationPermission.deniedForever) return;
       final pos=await Geolocator.getCurrentPosition(locationSettings:const LocationSettings(accuracy:LocationAccuracy.high));
       bearing=qiblaBearing(pos.latitude,pos.longitude);
-      final marks=await placemarkFromCoordinates(pos.latitude,pos.longitude);
+      final geo = Geocoding(locale: const Locale('tr','TR'));
+      final marks=await geo.placemarkFromCoordinates(pos.latitude,pos.longitude);
       if(marks.isNotEmpty) place='${marks.first.administrativeArea ?? ''} • ${marks.first.subAdministrativeArea ?? marks.first.locality ?? ''}';
     } finally { if(mounted)setState(()=>loading=false); }
   }
