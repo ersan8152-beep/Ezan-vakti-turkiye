@@ -689,3 +689,4 @@ class SettingsTab extends StatelessWidget {
     Card(child:ListTile(leading:const Icon(Icons.privacy_tip),title:const Text('Gizlilik Politikası'),onTap:()=>showDialog(context:c,builder:(_)=>const AlertDialog(title:Text('Gizlilik'),content:Text('Konum yalnızca vakit ve kıble özellikleri için kullanılabilir. Kullanıcı izinleri cihaz ayarlarından yönetilir.'))))),
   ]);
 }
+
