@@ -144,8 +144,12 @@ class _AppShellState extends State<AppShell> {
         int.parse(parts[0]), int.parse(parts[1]));
       if (!when.isAfter(now)) when = when.add(const Duration(days:1));
       await notifier.zonedSchedule(
-        id++, 'Ezan Vakti Türkiye', '${e.key} vakti: ${e.value}',
-        when, details, androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        id: id++,
+        title: 'Ezan Vakti Türkiye',
+        body: '${e.key} vakti: ${e.value}',
+        scheduledDate: when,
+        notificationDetails: details,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       );
     }
   }
@@ -230,11 +234,11 @@ class _AppShellState extends State<AppShell> {
 
 class CitySearchDelegate extends SearchDelegate<String> {
   @override List<Widget>? buildActions(BuildContext c)=>[IconButton(onPressed:()=>query='',icon:const Icon(Icons.clear))];
-  @override Widget? buildLeading(BuildContext c)=>IconButton(onPressed:()=>close(c,null),icon:const Icon(Icons.arrow_back));
-  @override Widget buildResults(BuildContext c)=>_list();
-  @override Widget buildSuggestions(BuildContext c)=>_list();
-  Widget _list()=>ListView(children:provinces.where((x)=>x.toLowerCase().contains(query.toLowerCase())).map(
-    (x)=>ListTile(title:Text(x),trailing:const Icon(Icons.chevron_right),onTap:()=>close(context,x))).toList());
+  @override Widget? buildLeading(BuildContext c)=>IconButton(onPressed:()=>close(c,''),icon:const Icon(Icons.arrow_back));
+  @override Widget buildResults(BuildContext c)=>_list(c);
+  @override Widget buildSuggestions(BuildContext c)=>_list(c);
+  Widget _list(BuildContext c)=>ListView(children:provinces.where((x)=>x.toLowerCase().contains(query.toLowerCase())).map(
+    (x)=>ListTile(title:Text(x),trailing:const Icon(Icons.chevron_right),onTap:()=>close(c,x))).toList());
 }
 
 class HomeTab extends StatelessWidget {
@@ -438,7 +442,7 @@ class _DuaTabState extends State<DuaTab> {
                   const Icon(Icons.chevron_right),
                 ]),
                 const SizedBox(height:15),
-                Text(d.arabic,textAlign:TextAlign.right,style:const TextStyle(fontSize:23,height:1.7)),
+                Text(d.arabic,textDirection:TextDirection.rtl,textAlign:TextAlign.right,style:const TextStyle(fontSize:23,height:1.7)),
                 const SizedBox(height:8),
                 Text(d.meaning,style:const TextStyle(color:Colors.grey)),
               ]),
@@ -466,7 +470,7 @@ class _DuaDetailPageState extends State<DuaDetailPage> {
         elevation:0,
         shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(24)),
         child:Padding(padding:const EdgeInsets.all(22),child:Column(children:[
-          Text(widget.dua.arabic,textAlign:TextAlign.center,style:const TextStyle(fontSize:29,height:1.8)),
+          Text(widget.dua.arabic,textDirection:TextDirection.rtl,textAlign:TextAlign.center,style:const TextStyle(fontSize:29,height:1.8)),
           const Divider(height:35),
           Align(alignment:Alignment.centerLeft,child:const Text('Okunuş',style:TextStyle(fontWeight:FontWeight.bold))),
           const SizedBox(height:8),
@@ -638,7 +642,7 @@ class _QiblaTabState extends State<QiblaTab> {
       if(p==LocationPermission.denied||p==LocationPermission.deniedForever) return;
       final pos=await Geolocator.getCurrentPosition(locationSettings:const LocationSettings(accuracy:LocationAccuracy.high));
       bearing=qiblaBearing(pos.latitude,pos.longitude);
-      final geo = Geocoding(locale: const Locale('tr','TR')); final marks=await geo.placemarkFromCoordinates(pos.latitude,pos.longitude);
+      final marks=await placemarkFromCoordinates(pos.latitude,pos.longitude);
       if(marks.isNotEmpty) place='${marks.first.administrativeArea ?? ''} • ${marks.first.subAdministrativeArea ?? marks.first.locality ?? ''}';
     } finally { if(mounted)setState(()=>loading=false); }
   }
