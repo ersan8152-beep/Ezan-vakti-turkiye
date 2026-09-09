@@ -442,7 +442,7 @@ class _DuaTabState extends State<DuaTab> {
                   const Icon(Icons.chevron_right),
                 ]),
                 const SizedBox(height:15),
-                Text(d.arabic,textDirection:TextDirection.rtl,textAlign:TextAlign.right,style:const TextStyle(fontSize:23,height:1.7)),
+                Text(d.arabic,textAlign:TextAlign.right,style:const TextStyle(fontSize:23,height:1.7)),
                 const SizedBox(height:8),
                 Text(d.meaning,style:const TextStyle(color:Colors.grey)),
               ]),
@@ -470,7 +470,7 @@ class _DuaDetailPageState extends State<DuaDetailPage> {
         elevation:0,
         shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(24)),
         child:Padding(padding:const EdgeInsets.all(22),child:Column(children:[
-          Text(widget.dua.arabic,textDirection:TextDirection.rtl,textAlign:TextAlign.center,style:const TextStyle(fontSize:29,height:1.8)),
+          Text(widget.dua.arabic,textAlign:TextAlign.center,style:const TextStyle(fontSize:29,height:1.8)),
           const Divider(height:35),
           Align(alignment:Alignment.centerLeft,child:const Text('Okunuş',style:TextStyle(fontWeight:FontWeight.bold))),
           const SizedBox(height:8),
