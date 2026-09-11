@@ -22,9 +22,10 @@ workflows:
 
       ios_signing:
 
-        distribution_type: app_store
-
-        bundle_identifier: com.ersantopkara.ezanvaktiturkiye
+       provisioning_profiles:
+- "ezan_vakti_app_store_2"
+certificates:
+- "Ezan Vakti Türkiye"
 
     scripts:
 
