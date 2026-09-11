@@ -30,26 +30,4 @@ flutter pub get
 
 - name: Configure Bundle ID
 script: |
-/usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier com.ersantopkara.ezanvaktiturkiye" ios/Runner/Info.plist
-
-- name: Set up code signing
-script: |
-xcode-project use-profiles
-
-- name: Install CocoaPods dependencies
-script: |
-find . -name "Podfile" -execdir pod install \;
-
-- name: Build IPA
-script: |
-flutter build ipa --release \
---export-options-plist=/Users/builder/export_options.plist
-
-artifacts:
-- build/ios/ipa/*.ipa
-
-publishing:
-app_store_connect:
-auth: integration
-submit_to_testflight: true
-submit_to_app_store: false
+/usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier com.ersantopkara.ezanvaktiturkiye" ios/Runner/
