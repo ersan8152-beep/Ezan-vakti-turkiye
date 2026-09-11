@@ -21,10 +21,10 @@ workflows:
       cocoapods: default
 
       ios_signing:
-
-       provisioning_profiles: - "ezan_vakti_app_store_2"
-       
-certificates: - "Ezan Vakti Türkiye"
+  provisioning_profiles: 
+  - "ezan_vakti_app_store_2"
+       certificates: 
+- "Ezan Vakti Türkiye"
 
     scripts:
 
