@@ -23,6 +23,7 @@ scripts:
 script: |
 - name: Create iOS project
 script: |
+script: |
 - name: Get Flutter packages
 script: |
 flutter pub get
