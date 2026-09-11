@@ -21,8 +21,6 @@ certificates:
 scripts:
 - name: Create iOS project
 script: |
-- name: Create iOS project
-script: |
 - name: Get Flutter packages
 script: |
 flutter pub get
