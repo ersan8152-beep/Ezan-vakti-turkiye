@@ -20,10 +20,8 @@ certificates:
 
 scripts:
 - name: Create iOS project
-script: |
-rm -rf ios
+script: | rm -rf ios
 flutter create --platforms=ios --org com.ersantopkara --project-name ezan_vakti_turkiye .
-
 - name: Get Flutter packages
 script: |
 flutter pub get
