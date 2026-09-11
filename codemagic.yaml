@@ -1,76 +1,55 @@
 workflows:
+ios-release:
+name: Ezan Vakti Türkiye - iOS
+max_build_duration: 120
+instance_type: mac_mini_m2
 
-  ios-release:
+integrations:
+app_store_connect: codemagic
 
-    name: Ezan Vakti Türkiye - iOS
+environment:
+flutter: stable
+xcode: latest
+cocoapods: default
 
-    max_build_duration: 120
-
-    instance_type: mac_mini_m2
-
-    integrations:
-
-      app_store_connect: codemagic
-
-    environment:
-
-      flutter: stable
-
-      xcode: latest
-
-      cocoapods: default
-
-      ios_signing:
-  provisioning_profiles: 
-  - "ezan_vakti_app_store_2"
-       certificates: 
+ios_signing:
+provisioning_profiles:
+- "ezan_vakti_app_store_2"
+certificates:
 - "Ezan Vakti Türkiye"
 
-    scripts:
+scripts:
+- name: Create iOS project
+script: |
+rm -rf ios
+flutter create --platforms=ios --org com.ersantopkara --project-name ezan_vakti_turkiye .
 
-      - name: Create iOS project
+- name: Get Flutter packages
+script: |
+flutter pub get
 
-        script: |
+- name: Configure Bundle ID
+script: |
+/usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier com.ersantopkara.ezanvaktiturkiye" ios/Runner/Info.plist
 
-          rm -rf ios
+- name: Set up code signing
+script: |
+xcode-project use-profiles
 
-          flutter create --platforms=ios --org com.ersantopkara --project-name ezan_vakti_turkiye .
+- name: Install CocoaPods dependencies
+script: |
+find . -name "Podfile" -execdir pod install \;
 
-      - name: Get Flutter packages
+- name: Build IPA
+script: |
+flutter build ipa --release \
+--export-options-plist=/Users/builder/export_options.plist
 
-        script: |
+artifacts:
+- build/ios/ipa/*.ipa
 
-          flutter pub get
-
-      - name: Configure Bundle ID
-
-        script: |
-
-          /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier com.ersantopkara.ezanvaktiturkiye" ios/Runner/Info.plist
-
-      - name: Set up code signing
-
-        script: |
-
-          xcode-project use-profiles
-
-      - name: Build IPA
-
-        script: |
-
-          flutter build ipa --release
-
-    artifacts:
-
-      - build/ios/ipa/*.ipa
-
-    publishing:
-
-      app_store_connect:
-
-        auth: integration
-
-        submit_to_testflight: true
-
-        submit_to_app_store: false
-
+publishing:
+app_store_connect:
+auth: integration
+submit_to_testflight: true
+submit_to_app_store: false
