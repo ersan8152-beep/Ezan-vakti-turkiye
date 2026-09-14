@@ -24,6 +24,7 @@ workflows:
       - name: Get Flutter packages
         script: |
           flutter pub get
+          
 - name: Set up code signing
         script: |
           xcode-project use-profiles
