@@ -24,7 +24,10 @@ workflows:
       - name: Get Flutter packages
         script: |
           flutter pub get
-
+- name: Set up code signing
+        script: |
+          xcode-project use-profiles
+          
       - name: Configure Bundle ID
         script: |
           /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier com.ersantopkara.ezanvaktiturkiye" ios/Runner/Info.plist
@@ -33,21 +36,7 @@ workflows:
         script: |
           find . -name "Podfile" -execdir pod install \;
 
-      - name: Set up keychain
-        script: |
-          keychain initialize
-
-      - name: Fetch signing files
-        script: |
-          app-store-connect fetch-signing-files "com.ersantopkara.ezanvaktiturkiye" \
-            --type IOS_APP_STORE \
-            --create
-
-      - name: Add certificates
-        script: |
-          keychain add-certificates
-
-      - name: Set up code signing
+         - name: Set up code signing
         script: |
           xcode-project use-profiles
 
